@@ -337,9 +337,10 @@ function fetchCalendar() {
       for (var i = 0; i < 3; i++) {
         var d = new Date(today);
         d.setDate(d.getDate() + i);
+        var dateStr = String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.';
         dayInfos.push({
           date: localDateStr(d),
-          label: dayLabels[i],
+          label: dayLabels[i] + ', ' + dateStr,
           colClass: 'col-' + i
         });
       }
