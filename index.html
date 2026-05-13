@@ -20,7 +20,7 @@
     width: 100vw;
     height: 100vh;
     display: grid;
-    grid-template-rows: auto 1fr 50vh;
+    grid-template-rows: 15vh 1fr 50vh;
     padding: 10px 14px;
     gap: 10px;
   }
@@ -45,20 +45,20 @@
 
   .date-panel { gap: 20px; }
   .date-panel .weekday {
-    font-size: 64px;
+    font-size: 6vh;
     font-weight: 700;
     letter-spacing: 3px;
     color: #0a1e5c;
     text-transform: uppercase;
   }
   .date-panel .date-text {
-    font-size: 48px;
+    font-size: 5vh;
     font-weight: 500;
     color: #1a4a7a;
   }
 
   .clock-panel .clock {
-    font-size: 56px;
+    font-size: 9vh;
     font-weight: 700;
     color: #e87400;
     font-variant-numeric: tabular-nums;
@@ -94,12 +94,13 @@
   .calendar-col::-webkit-scrollbar-track { background: transparent; }
   .calendar-col::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
   .calendar-day-header {
-    font-size: 36px;
+    font-size: 3.5vw;
     font-weight: 700;
     color: #0a1e5c;
     padding: 4px 0;
     border-bottom: 2px solid rgba(255,255,255,0.4);
     text-align: center;
+    text-transform: lowercase;
   }
   .calendar-event {
     display: flex;
@@ -112,17 +113,17 @@
   .calendar-event.col-1 { border-left-color: #5a9ee0; }
   .calendar-event.col-2 { border-left-color: #8abae8; }
   .event-time {
-    font-size: 16px;
+    font-size: 2vw;
     font-weight: 600;
     color: #0a1e5c;
   }
   .event-title {
-    font-size: 16px;
+    font-size: 2vw;
     color: #1a3a5a;
     line-height: 1.2;
   }
   .no-events {
-    font-size: 16px;
+    font-size: 2vw;
     color: #5a8aba;
     font-style: italic;
     padding: 3px 6px;
@@ -148,18 +149,18 @@
     border: 2px solid #f0c832;
   }
   .forecast-day .day-name {
-    font-size: 26px;
+    font-size: 3.5vw;
     font-weight: 700;
     letter-spacing: 2px;
     color: #0a1e5c;
-    text-transform: uppercase;
+    text-transform: lowercase;
   }
   .forecast-day .weather-icon {
-    width: 150px;
-    height: 150px;
+    width: 22vh;
+    height: 22vh;
   }
   .forecast-day .weather-desc {
-    font-size: 22px;
+    font-size: 2.2vw;
     color: #1a4a7a;
     text-align: center;
     line-height: 1.1;
@@ -170,12 +171,12 @@
     align-items: baseline;
   }
   .forecast-day .temp-high {
-    font-size: 40px;
+    font-size: 6vh;
     font-weight: 700;
     color: #0a1e5c;
   }
   .forecast-day .temp-low {
-    font-size: 26px;
+    font-size: 4vh;
     color: #5a8aba;
   }
 
