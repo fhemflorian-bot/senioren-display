@@ -20,7 +20,7 @@
     width: 100vw;
     height: 100vh;
     display: grid;
-    grid-template-rows: 15vh 1fr 50vh;
+    grid-template-rows: 18vh 1fr 48vh;
     padding: 10px 14px;
     gap: 10px;
   }
@@ -41,24 +41,27 @@
     align-items: center;
     justify-content: center;
     padding: 4px 12px;
+    overflow: hidden;
   }
 
   .date-panel { gap: 20px; }
   .date-panel .weekday {
-    font-size: 10vh;
+    font-size: 9vh;
     font-weight: 700;
     letter-spacing: 3px;
     color: #0a1e5c;
     text-transform: uppercase;
+    white-space: nowrap;
   }
   .date-panel .date-text {
-    font-size: 8.5vh;
+    font-size: 7.5vh;
     font-weight: 500;
     color: #1a4a7a;
+    white-space: nowrap;
   }
 
   .clock-panel .clock {
-    font-size: 15vh;
+    font-size: 12vh;
     font-weight: 700;
     color: #e87400;
     font-variant-numeric: tabular-nums;
