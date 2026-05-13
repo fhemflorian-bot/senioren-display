@@ -145,34 +145,35 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 4px;
-    padding: 8px 6px;
+    justify-content: space-evenly;
+    gap: 0;
+    padding: 4px 6px;
     background: rgba(255,255,255,0.25);
     backdrop-filter: blur(10px);
     border-radius: 14px;
     border: 2px solid #f0c832;
   }
   .forecast-day .day-name {
-    font-size: 3.5vw;
+    font-size: 2.2vw;
     font-weight: 700;
     letter-spacing: 2px;
     color: #0a1e5c;
     text-transform: lowercase;
+    line-height: 1;
   }
   .forecast-day .weather-icon {
-    width: 16vh;
-    height: 16vh;
+    width: 18vh;
+    height: 18vh;
   }
   .forecast-day .weather-desc {
-    font-size: 2.2vw;
+    font-size: 1.8vw;
     color: #1a4a7a;
     text-align: center;
-    line-height: 1.1;
+    line-height: 1;
   }
   .forecast-day .temps {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     align-items: baseline;
   }
   .forecast-day .temp-high {
