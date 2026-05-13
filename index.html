@@ -20,7 +20,7 @@
     width: 100vw;
     height: 100vh;
     display: grid;
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto 1fr 50vh;
     padding: 10px 14px;
     gap: 10px;
   }
@@ -45,14 +45,14 @@
 
   .date-panel { gap: 20px; }
   .date-panel .weekday {
-    font-size: 40px;
+    font-size: 64px;
     font-weight: 700;
     letter-spacing: 3px;
     color: #0a1e5c;
     text-transform: uppercase;
   }
   .date-panel .date-text {
-    font-size: 34px;
+    font-size: 48px;
     font-weight: 500;
     color: #1a4a7a;
   }
@@ -76,17 +76,7 @@
     padding: 6px 10px;
     overflow: hidden;
   }
-  .calendar-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #0a1e5c;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+  .calendar-title { display: none; }
   .calendar-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -104,11 +94,11 @@
   .calendar-col::-webkit-scrollbar-track { background: transparent; }
   .calendar-col::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
   .calendar-day-header {
-    font-size: 18px;
+    font-size: 36px;
     font-weight: 700;
     color: #0a1e5c;
-    padding: 2px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.4);
+    padding: 4px 0;
+    border-bottom: 2px solid rgba(255,255,255,0.4);
     text-align: center;
   }
   .calendar-event {
@@ -165,8 +155,8 @@
     text-transform: uppercase;
   }
   .forecast-day .weather-icon {
-    width: 90px;
-    height: 90px;
+    width: 150px;
+    height: 150px;
   }
   .forecast-day .weather-desc {
     font-size: 22px;
@@ -234,7 +224,7 @@
 var GOOGLE_API_KEY = 'AIzaSyBaJTPplarH9kDwFZ3B6tdmqqHDHou1J6A';
 var GOOGLE_CALENDAR_ID = '75d5b2a091b8933aba3c41cb65ea958ea953fec8fa0a1311eea9f0a736135593@group.calendar.google.com';
 
-var ICON_BASE = 'https://cdn.jsdelivr.net/gh/basmilius/weather-icons/production/fill/all/';
+var ICON_BASE = 'https://cdn.jsdelivr.net/gh/basmilius/weather-icons/production/fill/svg/';
 var WMO = {
   0:  { label: 'Klar',                  icon: 'clear-day' },
   1:  { label: 'Überwiegend klar',      icon: 'clear-day' },
@@ -365,7 +355,7 @@ function fetchCalendar() {
             var t = new Date(ev.start.dateTime);
             timeStr = String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
           } else {
-            timeStr = 'Ganztag';
+            timeStr = '';
           }
           grouped[dayKey].push({ time: timeStr, title: ev.summary || '(Kein Titel)' });
         }
@@ -380,7 +370,7 @@ function fetchCalendar() {
         } else {
           grouped[di.date].forEach(function(ev) {
             html += '<div class="calendar-event ' + di.colClass + '">';
-            html += '<span class="event-time">' + ev.time + '</span>';
+            if (ev.time) html += '<span class="event-time">' + ev.time + '</span>';
             html += '<span class="event-title">' + ev.title + '</span>';
             html += '</div>';
           });
