@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Info-Display</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    background: linear-gradient(180deg, #4a9eed 0%, #87CEEB 30%, #a8ddf0 70%, #c9e8f5 100%);
+    color: #1a2a3a;
+  }
+
+  .container {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  /* === TOP ROW === */
+  .top-row {
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    gap: 10px;
+  }
+
+  .panel {
+    background: rgba(255,255,255,0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 2px solid #f0c832;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+  }
+
+  .date-panel { gap: 20px; }
+  .date-panel .weekday {
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #0a1e5c;
+    text-transform: uppercase;
+  }
+  .date-panel .date-text {
+    font-size: 34px;
+    font-weight: 500;
+    color: #1a4a7a;
+  }
+
+  .clock-panel .clock {
+    font-size: 56px;
+    font-weight: 700;
+    color: #e87400;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+  }
+
+  /* === CALENDAR === */
+  .calendar-section {
+    display: flex;
+    flex-direction: column;
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 2px solid #f0c832;
+    padding: 6px 10px;
+    overflow: hidden;
+  }
+  .calendar-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0a1e5c;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+  }
+  .calendar-col {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    overflow-y: auto;
+  }
+  .calendar-col::-webkit-scrollbar { width: 3px; }
+  .calendar-col::-webkit-scrollbar-track { background: transparent; }
+  .calendar-col::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
+  .calendar-day-header {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0a1e5c;
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.4);
+    text-align: center;
+  }
+  .calendar-event {
+    display: flex;
+    flex-direction: column;
+    padding: 3px 6px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 6px;
+    border-left: 3px solid #2a7de1;
+  }
+  .calendar-event.col-1 { border-left-color: #5a9ee0; }
+  .calendar-event.col-2 { border-left-color: #8abae8; }
+  .event-time {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0a1e5c;
+  }
+  .event-title {
+    font-size: 16px;
+    color: #1a3a5a;
+    line-height: 1.2;
+  }
+  .no-events {
+    font-size: 16px;
+    color: #5a8aba;
+    font-style: italic;
+    padding: 3px 6px;
+    text-align: center;
+  }
+
+  /* === FORECAST === */
+  .forecast {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .forecast-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 6px;
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 14px;
+    border: 2px solid #f0c832;
+  }
+  .forecast-day .day-name {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #0a1e5c;
+    text-transform: uppercase;
+  }
+  .forecast-day .weather-icon {
+    font-size: 72px;
+    line-height: 1;
+  }
+  .forecast-day .weather-desc {
+    font-size: 22px;
+    color: #1a4a7a;
+    text-align: center;
+    line-height: 1.1;
+  }
+  .forecast-day .temps {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+  }
+  .forecast-day .temp-high {
+    font-size: 40px;
+    font-weight: 700;
+    color: #0a1e5c;
+  }
+  .forecast-day .temp-low {
+    font-size: 26px;
+    color: #5a8aba;
+  }
+
+  .loading-text {
+    text-align: center;
+    font-size: 20px;
+    color: #5a8aba;
+    padding: 10px;
+    grid-column: 1 / -1;
+  }
+  .error-text {
+    text-align: center;
+    font-size: 16px;
+    color: #c0392b;
+    padding: 8px;
+    grid-column: 1 / -1;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="top-row">
+    <div class="panel date-panel">
+      <span class="weekday" id="weekday"></span>
+      <span class="date-text" id="dateText"></span>
+    </div>
+    <div class="panel clock-panel">
+      <span class="clock" id="clock">00:00</span>
+    </div>
+  </div>
+
+  <div class="calendar-section">
+    <div class="calendar-title">📅 Termine</div>
+    <div class="calendar-grid" id="calendarGrid">
+      <div class="loading-text">Kalender wird geladen…</div>
+    </div>
+  </div>
+
+  <div class="forecast" id="forecast">
+    <div class="loading-text">Wetter wird geladen…</div>
+  </div>
+</div>
+
+<script>
+var GOOGLE_API_KEY = 'DEIN_API_KEY_HIER';
+var GOOGLE_CALENDAR_ID = 'DEINE_KALENDER_ID_HIER';
+
+var WMO = {
+  0: { label: 'Klar', icon: '☀️' },
+  1: { label: 'Überwiegend klar', icon: '🌤️' },
+  2: { label: 'Teilweise bewölkt', icon: '⛅' },
+  3: { label: 'Bewölkt', icon: '☁️' },
+  45: { label: 'Nebel', icon: '🌫️' },
+  48: { label: 'Nebel', icon: '🌫️' },
+  51: { label: 'Leichter Nieselregen', icon: '🌦️' },
+  53: { label: 'Nieselregen', icon: '🌦️' },
+  55: { label: 'Starker Nieselregen', icon: '🌧️' },
+  61: { label: 'Leichter Regen', icon: '🌦️' },
+  63: { label: 'Regen', icon: '🌧️' },
+  65: { label: 'Starkregen', icon: '🌧️' },
+  66: { label: 'Gefrierender Regen', icon: '🌧️' },
+  67: { label: 'Gefrierender Regen', icon: '🌧️' },
+  71: { label: 'Leichter Schnee', icon: '🌨️' },
+  73: { label: 'Schnee', icon: '❄️' },
+  75: { label: 'Starker Schnee', icon: '❄️' },
+  77: { label: 'Graupel', icon: '🌨️' },
+  80: { label: 'Leichte Schauer', icon: '🌦️' },
+  81: { label: 'Schauer', icon: '🌧️' },
+  82: { label: 'Starke Schauer', icon: '🌧️' },
+  85: { label: 'Schneeschauer', icon: '🌨️' },
+  86: { label: 'Starke Schneeschauer', icon: '❄️' },
+  95: { label: 'Gewitter', icon: '⛈️' },
+  96: { label: 'Gewitter mit Hagel', icon: '⛈️' },
+  99: { label: 'Starkes Gewitter', icon: '⛈️' }
+};
+
+var WEEKDAYS = ['SONNTAG','MONTAG','DIENSTAG','MITTWOCH','DONNERSTAG','FREITAG','SAMSTAG'];
+var MONTHS = ['JANUAR','FEBRUAR','MÄRZ','APRIL','MAI','JUNI','JULI','AUGUST','SEPTEMBER','OKTOBER','NOVEMBER','DEZEMBER'];
+
+function getWMO(code) { return WMO[code] || { label: 'Unbekannt', icon: '❓' }; }
+
+function updateClock() {
+  var now = new Date();
+  var h = String(now.getHours()).padStart(2, '0');
+  var m = String(now.getMinutes()).padStart(2, '0');
+  var sep = now.getSeconds() % 2 === 0 ? ':' : '<span style="opacity:0.3">:</span>';
+  document.getElementById('clock').innerHTML = h + sep + m;
+  document.getElementById('weekday').textContent = WEEKDAYS[now.getDay()];
+  document.getElementById('dateText').textContent = now.getDate() + '. ' + MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+function fetchWeather(lat, lon) {
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&daily=weathercode,temperature_2m_max,temperature_2m_min&current_weather=true&timezone=auto&forecast_days=3')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.daily) {
+        var dayLabels = ['HEUTE', 'MORGEN', 'ÜBERMORGEN'];
+        var html = '';
+        for (var i = 0; i < data.daily.time.length; i++) {
+          var info = getWMO(data.daily.weathercode[i]);
+          html += '<div class="forecast-day">';
+          html += '<div class="day-name">' + dayLabels[i] + '</div>';
+          html += '<div class="weather-icon">' + info.icon + '</div>';
+          html += '<div class="weather-desc">' + info.label + '</div>';
+          html += '<div class="temps">';
+          html += '<span class="temp-high">' + Math.round(data.daily.temperature_2m_max[i]) + '°</span>';
+          html += '<span class="temp-low">' + Math.round(data.daily.temperature_2m_min[i]) + '°</span>';
+          html += '</div></div>';
+        }
+        document.getElementById('forecast').innerHTML = html;
+      }
+    })
+    .catch(function() {
+      document.getElementById('forecast').innerHTML = '<div class="error-text">Wetterdaten nicht verfügbar</div>';
+    });
+}
+
+function fetchCalendar() {
+  if (GOOGLE_API_KEY === 'DEIN_API_KEY_HIER') {
+    document.getElementById('calendarGrid').innerHTML =
+      '<div class="loading-text">⚙️ Bitte API-Key und Kalender-ID eintragen</div>';
+    return;
+  }
+
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var endDate = new Date(today);
+  endDate.setDate(endDate.getDate() + 3);
+
+  var url = 'https://www.googleapis.com/calendar/v3/calendars/' +
+    encodeURIComponent(GOOGLE_CALENDAR_ID) +
+    '/events?key=' + GOOGLE_API_KEY +
+    '&timeMin=' + today.toISOString() +
+    '&timeMax=' + endDate.toISOString() +
+    '&singleEvents=true&orderBy=startTime&maxResults=30';
+
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.error) {
+        document.getElementById('calendarGrid').innerHTML =
+          '<div class="error-text">Kalender-Fehler: ' + (data.error.message || 'Unbekannt') + '</div>';
+        return;
+      }
+
+      var events = data.items || [];
+      var dayInfos = [];
+      var dayLabels = ['Heute', 'Morgen', 'Übermorgen'];
+      for (var i = 0; i < 3; i++) {
+        var d = new Date(today);
+        d.setDate(d.getDate() + i);
+        dayInfos.push({
+          date: d.toISOString().slice(0, 10),
+          label: dayLabels[i],
+          colClass: 'col-' + i
+        });
+      }
+
+      var grouped = {};
+      dayInfos.forEach(function(di) { grouped[di.date] = []; });
+
+      events.forEach(function(ev) {
+        var start = ev.start.dateTime || ev.start.date;
+        var dayKey = start.slice(0, 10);
+        if (grouped[dayKey]) {
+          var timeStr = '';
+          if (ev.start.dateTime) {
+            var t = new Date(ev.start.dateTime);
+            timeStr = String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
+          } else {
+            timeStr = 'Ganztag';
+          }
+          grouped[dayKey].push({ time: timeStr, title: ev.summary || '(Kein Titel)' });
+        }
+      });
+
+      var html = '';
+      dayInfos.forEach(function(di) {
+        html += '<div class="calendar-col">';
+        html += '<div class="calendar-day-header">' + di.label + '</div>';
+        if (grouped[di.date].length === 0) {
+          html += '<div class="no-events">Keine Termine</div>';
+        } else {
+          grouped[di.date].forEach(function(ev) {
+            html += '<div class="calendar-event ' + di.colClass + '">';
+            html += '<span class="event-time">' + ev.time + '</span>';
+            html += '<span class="event-title">' + ev.title + '</span>';
+            html += '</div>';
+          });
+        }
+        html += '</div>';
+      });
+
+      document.getElementById('calendarGrid').innerHTML = html;
+    })
+    .catch(function() {
+      document.getElementById('calendarGrid').innerHTML =
+        '<div class="error-text">Kalender nicht erreichbar</div>';
+    });
+}
+
+var REFRESH_INTERVAL = 30 * 60 * 1000; // 30 Minuten
+
+function init() {
+  var lat = 52.52, lon = 13.405;
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function(pos) { fetchWeather(pos.coords.latitude, pos.coords.longitude); },
+      function() { fetchWeather(lat, lon); },
+      { timeout: 5000 }
+    );
+  } else {
+    fetchWeather(lat, lon);
+  }
+  fetchCalendar();
+
+  // Wetter alle 30 Min
+  setInterval(function() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function(pos) { fetchWeather(pos.coords.latitude, pos.coords.longitude); },
+        function() { fetchWeather(52.52, 13.405); },
+        { timeout: 5000 }
+      );
+    }
+  }, REFRESH_INTERVAL);
+
+  // Kalender alle 30 Min
+  setInterval(fetchCalendar, REFRESH_INTERVAL);
+}
+init();
+</script>
+</body>
+</html>
