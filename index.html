@@ -337,11 +337,16 @@ function fetchCalendar() {
       var events = data.items || [];
       var dayInfos = [];
       var dayLabels = ['Heute', 'Morgen', 'Übermorgen'];
+      function localDateStr(d) {
+        return d.getFullYear() + '-' +
+          String(d.getMonth() + 1).padStart(2, '0') + '-' +
+          String(d.getDate()).padStart(2, '0');
+      }
       for (var i = 0; i < 3; i++) {
         var d = new Date(today);
         d.setDate(d.getDate() + i);
         dayInfos.push({
-          date: d.toISOString().slice(0, 10),
+          date: localDateStr(d),
           label: dayLabels[i],
           colClass: 'col-' + i
         });
